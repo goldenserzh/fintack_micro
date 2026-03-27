@@ -10,8 +10,8 @@ class Profile(Base):
 
     profile_id : Mapped[int] = mapped_column(primary_key=True)
     user_id : Mapped[int] = mapped_column(ForeignKey("user.user_id"))
-    income : Mapped[Decimal] = mapped_column()
-    limit : Mapped[Decimal] = mapped_column()
+    income : Mapped[Decimal] = mapped_column(Decimal(10,2))
+    limit : Mapped[Decimal] = mapped_column(Decimal(10, 2))
     goal : Mapped[str] = mapped_column(String(50))
 
     user: Mapped["User"] = relationship(back_populates="profile")
