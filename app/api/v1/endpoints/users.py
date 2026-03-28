@@ -23,7 +23,7 @@ def read_user(user_id: int, db:Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user
 
-@router.post("/", response_model=sc_user.UserResponse)
+@router.post("/{user_id}", response_model=sc_user.UserResponse)
 def create_user(user:sc_user.UserCreate, db: Session = Depends(get_db)):
     if crud_user.get_user_by_email(db, user.email):
         raise HTTPException(status_code=409, detail="Такой пользователь существует")
