@@ -12,8 +12,8 @@ class User(Base):
     name : Mapped[str] = mapped_column(String(30))
     email: Mapped[str] = mapped_column(String(50), unique=True)
     hashed_password: Mapped[str] = mapped_column(String())
+    
     transactions: Mapped[List["Transaction"]] = relationship(back_populates="user")
-
     profile: Mapped["Profile"] = relationship(back_populates='user', uselist=False)
 
     def __repr__(self) -> str:

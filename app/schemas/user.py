@@ -1,6 +1,8 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
+from app.schemas import profile, transaction
+
 
 
 class UserBase(BaseModel):
@@ -9,34 +11,23 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    password: str = Field(..., min_length=8, description="Пароль должен быть минимум 8 символов")
+    
+class UserLogin(BaseModel):
+    email: EmailStr
     password: str
 
-class UserLogin(UserBase):
-    pass
+class UserResponse(UserBase):
+    user_id: int
+    created_at : datetime
+    profile: Optional[profile.ProfileResponse]
+    transactions: List[transaction.TransactionResponse] = []
 
-class UpdateUser(UserBase):
+    class Config:
+        from_attributes = True
+
+class UpdateUser(BaseModel):
+    email: Optional[EmailStr] = None
     name: Optional[str] = None
-    password: Optional[str] = None
-    
 
-#------------ТРАНЗАКЦИИ----------
-
-class BaseTransaction(BaseModel):
-    title: str
-    money: float
-    description: str
-    category: str
-
-class TransactionCreate(BaseTransaction):
-    pass
-
-class UpdateTransactions(BaseTransaction):
-    title: Optional[str] = None
-    money: Optional[float] = None
-    description: Optional[str] = None
-    category: Optional[str] = None
-
-class Transactions(BaseTransaction):
-    transaction_id: int
-    created_at: datetime.now
 
