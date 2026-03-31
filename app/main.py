@@ -1,19 +1,27 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.models import profile, transaction, user
-from sqlalchemy import engine
+from app.models import user
+from app.core.config import engine
+from app.api.v1.endpoints.profile import router as profile_router
+from app.api.v1.endpoints.users import router as users_router
+from app.api.v1.endpoints.transactions import router as transactions_router  
 
-profile.Base.metadata.create_all(bind=engine)
-transaction.Base.metadata.create_all(bind=engine)
-user.Base.metadata.create_all(bind=engine)
-
+# user.Base.metadata.create_all(bind=engine)  # Убрано, так как alembic управляет схемой
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=True,      
-    allow_methods=["*"],         
-    allow_headers=["*"],         
-)
+
+app.include_router(profile_router,  
+                   prefix="/profile", 
+                   tags=["profile"])
+
+app.include_router(users_router,   
+                   prefix="/users",
+                   tags=["user"])
+
+app.include_router(transactions_router, 
+                   prefix="/transactions",
+                   tags=["transactions"])
+
+@app.get("/")
+async def root():
+    return {"message": "Hello to the Fintrack !"}

@@ -1,11 +1,10 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.models.user import User
 from app.models.profile import Profile
 from app.schemas.user import UserCreate
-
-
 
 from passlib.context import CryptContext
 
@@ -23,8 +22,19 @@ def get_user_by_email(db:Session, email: str) -> Optional[User]:
     user = db.query(User).filter(User.email == email).first()
     return user
 
+def _normalize_password_for_bcrypt(password: str) -> str:
+
+    encoded = password.encode("utf-8")
+    if len(encoded) > 72:
+        raise HTTPException(
+            status_code=422,
+            detail="Пароль слишком длинный для bcrypt: максимум 72 байта (utf-8).",
+        )
+    return password
+
 def create_user(db: Session, user: UserCreate) -> User:
-    hashed_password = pwd_context.hash(user.password)
+    user_password = _normalize_password_for_bcrypt(user.password)
+    hashed_password = pwd_context.hash(user_password)
     db_user = User(
         name = user.name,
         email = user.email,
@@ -51,5 +61,5 @@ def delete_user(db: Session, user_id: int) -> Optional[User]:
         db.delete(user)
         db.commit()
         return user
-    
     return None
+    
