@@ -16,7 +16,9 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
     
-    transactions: Mapped[List["Transaction"]] = relationship("Transaction", back_populates="user")
+    transactions: Mapped[List["Transaction"]] = relationship("Transaction",
+                                                              back_populates="user",
+                                                              cascade="all, delete-orphan")
     profile: Mapped["Profile"] = relationship("Profile", back_populates="user", uselist=False)
 
     def __repr__(self) -> str:

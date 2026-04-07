@@ -38,8 +38,6 @@ async def delete_user(user_id: int , db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     profile = crud_profile.get_profile_by_user_id(db, user_id)
-    if not profile:
-        raise HTTPException(status_code=404, detail="Профиль не найден")
     user_data = sc_user.UserResponse.from_orm(user)
     deleted_profile=crud_profile.delete_profile(db, user_id)
     deleted_user = crud_user.delete_user(db, user_id)
