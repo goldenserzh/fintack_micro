@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app import db
-from app.core.config import  get_db  
+from app.core.config import get_db
 from app.schemas import user as sc_user
 from app.services import crud_user, crud_profile
 
@@ -32,11 +32,24 @@ async def create_user(user:sc_user.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=409, detail="Такой пользователь существует")
     return crud_user.create_user(db, user)
 
+@router.patch("/{user_id}", response_model=sc_user.UserResponse)
+async def update_user(user_id: int, data: sc_user.UpdateUser, db: Session = Depends(get_db)):
+    user = crud_user.get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    if data.email and data.email != user.email:
+        if crud_user.get_user_by_email(db, data.email):
+            raise HTTPException(status_code=409, detail="Email уже занят")
+    updated = crud_user.update_user(db, user_id, data.name, data.email, data.password)
+    return updated
+
+
 @router.delete("/{user_id}", response_model=sc_user.UserResponse)
 async def delete_user(user_id: int , db: Session = Depends(get_db)):
     user = crud_user.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
     profile = crud_profile.get_profile_by_user_id(db, user_id)
     user_data = sc_user.UserResponse.from_orm(user)
     deleted_profile=crud_profile.delete_profile(db, user_id)
