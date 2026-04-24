@@ -1,32 +1,35 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { User } from '../types';
 
+const TOKEN_KEY = 'fintracker_token';
+const USER_KEY = 'fintracker_user';
+
 interface AuthContextValue {
   user: User | null;
-  setUser: (user: User | null) => void;
+  setUser: (user: User | null, token?: string) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const STORAGE_KEY = 'fintracker_user';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<User | null>(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(USER_KEY);
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
     }
   });
 
-  const setUser = useCallback((u: User | null) => {
+  const setUser = useCallback((u: User | null, token?: string) => {
     setUserState(u);
-    if (u) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+    if (!u) {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
     } else {
-      localStorage.removeItem(STORAGE_KEY);
+      if (token) localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_KEY, JSON.stringify(u));
     }
   }, []);
 

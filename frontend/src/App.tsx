@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
 import SettingsPage from './pages/SettingsPage';
+import FinanceProfilePage from './pages/FinanceProfilePage';
 import UsersList from './components/UsersList';
 import UserDetail from './components/UserDetail';
 import CreateUser from './components/CreateUser';
@@ -16,19 +17,24 @@ function NavBar() {
 
   return (
     <nav className="app-nav">
-      <Link to={user ? (user.is_admin ? '/' : '/dashboard') : '/login'} className="nav-logo">
-        <div className="nav-logo-icon">💰</div>
-        FinTracker
-      </Link>
-      <div className="nav-right">
-        {user?.is_admin && <span className="nav-badge">Администратор</span>}
-        {user && <span className="nav-user">{user.name}</span>}
-        <button className="btn-icon theme-toggle" onClick={toggle} title="Сменить тему">
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
-        {user && (
-          <button className="btn btn-secondary btn-sm" onClick={logout}>Выйти</button>
-        )}
+      <div className="nav-inner">
+        <Link to={user ? (user.is_admin ? '/' : '/dashboard') : '/login'} className="nav-logo">
+          <div className="nav-logo-icon">💰</div>
+          FinTracker
+        </Link>
+        <div className="nav-right">
+          {user?.is_admin && <span className="nav-badge">Администратор</span>}
+          {user && <span className="nav-user">{user.name}</span>}
+          <button className="btn-icon theme-toggle" onClick={toggle} title="Сменить тему">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+          {user && (
+            <Link to="/settings" className="btn btn-secondary btn-sm">⚙️ Настройки</Link>
+          )}
+          {user && (
+            <button className="btn btn-secondary btn-sm" onClick={logout}>Выйти</button>
+          )}
+        </div>
       </div>
     </nav>
   );
@@ -68,6 +74,7 @@ function App() {
                 <Route path="/" element={<RequireAuth><RootRedirect /></RequireAuth>} />
                 <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
               <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+              <Route path="/finance-profile" element={<RequireAuth><FinanceProfilePage /></RequireAuth>} />
                 <Route path="/users" element={<RequireAdmin><UsersList /></RequireAdmin>} />
                 <Route path="/users/:userId" element={<RequireAdmin><UserDetail /></RequireAdmin>} />
                 <Route path="/create-user" element={<RequireAdmin><CreateUser /></RequireAdmin>} />

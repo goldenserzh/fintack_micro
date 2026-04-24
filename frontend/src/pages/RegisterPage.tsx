@@ -17,8 +17,8 @@ const RegisterPage = () => {
     setError(null);
     setSubmitting(true);
     try {
-      const user = await registerFirst({ name, email, password });
-      setUser(user);
+      const { access_token, user } = await registerFirst({ name, email, password });
+      setUser(user, access_token);
       navigate(user.is_admin ? '/' : '/dashboard');
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;

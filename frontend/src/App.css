@@ -7,14 +7,22 @@
 .app-nav {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
   height: 60px;
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
+}
+
+.nav-inner {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nav-logo {
@@ -42,13 +50,13 @@
 
 .app-main {
   flex: 1;
-  max-width: 1080px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2rem 2.5rem;
 }
 
 @media (max-width: 600px) {
-  .app-nav { padding: 0 1rem; }
+  .nav-inner { padding: 0 1rem; }
   .app-main { padding: 1.25rem 1rem; }
 }

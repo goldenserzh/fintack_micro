@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend,
+  PieChart, Pie, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { Transaction } from '../types';
 
@@ -117,7 +117,11 @@ export default function SpendingChart({ transactions }: Props) {
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
-                  data={data}
+                  data={data.map((entry, index) => ({
+                    ...entry,
+                    fill: entry.color,
+                    fillOpacity: activeIndex === null || activeIndex === index ? 1 : 0.45,
+                  }))}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -127,16 +131,7 @@ export default function SpendingChart({ transactions }: Props) {
                   onMouseEnter={(_, index) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                   stroke="none"
-                >
-                  {data.map((entry, index) => (
-                    <Cell
-                      key={entry.id}
-                      fill={entry.color}
-                      opacity={activeIndex === null || activeIndex === index ? 1 : 0.45}
-                      style={{ cursor: 'pointer', transition: 'opacity 0.2s' }}
-                    />
-                  ))}
-                </Pie>
+                />
                 <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
