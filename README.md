@@ -188,12 +188,7 @@ Authorization: Bearer <token>
 ```
 
 Полная документация доступна по адресу `/docs` (Swagger UI).
-
 ---
-
-## Скриншоты
-
-> *Добавь скриншоты интерфейса в папку `docs/screenshots/` и раскомментируй блок ниже*
 
 <!-- 
 ![Dashboard](docs/screenshots/dashboard.png)
