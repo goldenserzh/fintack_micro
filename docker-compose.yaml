@@ -1,0 +1,46 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fintracker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fintracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./fintracker_main/backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      USER_BD: postgres
+      PASSWORD_BD: postgres
+      HOST_DB: db
+      PORT_DB: 5432
+      NAME_DB: fintracker
+      SECRET_KEY: ${SECRET_KEY:-f3a9b2c7e1d4f6a8b0c2e5d7f9a1b3c4e6d8f0a2b4c6d8e0f2a4b6c8d0e2f4a6}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_DAYS: 30
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./fintracker_main/frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
