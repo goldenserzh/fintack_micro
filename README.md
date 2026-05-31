@@ -197,6 +197,3 @@ Authorization: Bearer <token>
 
 ---
 
-## Лицензия
-
-MIT
